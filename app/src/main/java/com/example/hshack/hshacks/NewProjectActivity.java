@@ -2,6 +2,7 @@ package com.example.hshack.hshacks;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.widget.AdapterView;
@@ -32,9 +33,15 @@ public class NewProjectActivity extends AppCompatActivity {
     ListView listView;
     Button submit;
     public int GLOBALCOUNT = 0;
+    public Calendar[] calendars;
+    public Calendar cal;
 
     ArrayList<String> uids = new ArrayList<>();
     ArrayList<String> checkedUids = new ArrayList<>();
+    public ArrayList<ArrayList<Integer>> events = new ArrayList<>();
+    public ArrayList<ArrayList<ArrayList<Integer>>> finalList = new ArrayList<ArrayList<ArrayList<Integer>>>();
+    public ArrayList<ArrayList<ArrayList<Integer>>> dailyRestrictions;
+
 
     ArrayAdapter<String> adapter;
 
@@ -49,7 +56,7 @@ public class NewProjectActivity extends AppCompatActivity {
 
         adapter = new ArrayAdapter<>(NewProjectActivity.this, android.R.layout.simple_list_item_multiple_choice);
 
-        emails = database.getReference("userEmails");
+        emails = database.getReference("userEmail");
         users = database.getReference("Users");
         emails.addValueEventListener(new ValueEventListener() {
             @Override
@@ -57,6 +64,7 @@ public class NewProjectActivity extends AppCompatActivity {
                 for (DataSnapshot d : dataSnapshot.getChildren()) {
 
                     adapter.add(d.getValue().toString());
+                    Toast.makeText(getApplicationContext(), d.getValue().toString(), Toast.LENGTH_LONG).show();
                     uids.add(d.getKey());
 
                 }
@@ -87,11 +95,78 @@ public class NewProjectActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Calendar cal = Calendar.getInstance();
+                cal = Calendar.getInstance();
                 Calendar targetCal = Calendar.getInstance();
                 targetCal.add(Calendar.DAY_OF_MONTH, Integer.parseInt(dueOn.getText().toString()));
 
-                final Calendar[] calendars = new Calendar[Integer.parseInt(dueOn.getText().toString())];
+                dailyRestrictions = new ArrayList<ArrayList<ArrayList<Integer>>>();
+
+                //Toast.makeText(getApplicationContext(), Integer.parseInt(dueOn.getText().toString()), Toast.LENGTH_LONG).show();
+
+                for (GLOBALCOUNT = 0; GLOBALCOUNT < Integer.parseInt(dueOn.getText().toString()); GLOBALCOUNT++) {
+                    users.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            ArrayList<ArrayList<ArrayList<Integer>>> masterArr = new ArrayList<ArrayList<ArrayList<Integer>>>();
+                            for (DataSnapshot d : dataSnapshot.getChildren()) {
+                                if (checkedUids.contains(d.getKey())) {
+                                    ArrayList<ArrayList<Integer>> currRestrictions = new ArrayList<ArrayList<Integer>>();
+                                    DatabaseReference subUser = users.child(d.getKey());
+                                    subUser.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            for (DataSnapshot d1 : dataSnapshot.getChildren()) {
+                                                StringTokenizer st = new StringTokenizer(d1.getValue().toString());
+                                                if (Integer.parseInt(st.nextToken()) == 1) {
+                                                    if (!(Integer.parseInt(st.nextToken()) == (int) cal.get(Calendar.DAY_OF_WEEK))) {
+                                                        continue;
+                                                    }
+                                                } else {
+                                                    Calendar tempCal = Calendar.getInstance();
+                                                    tempCal.set(Calendar.YEAR, Integer.parseInt(st.nextToken()));
+                                                    tempCal.set(Calendar.MONTH, Integer.parseInt(st.nextToken()));
+                                                    tempCal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(st.nextToken()));
+
+                                                    if (!calEqual(tempCal, cal)) {
+                                                        continue;
+                                                    }
+                                                }
+
+                                                ArrayList<Integer> temp = new ArrayList<Integer>();
+                                                temp.add(convertToMins(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
+                                                temp.add(convertToMins(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
+
+
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+                                        }
+                                    });
+
+                                    masterArr.add(getAvailableTime(getRemainingMinutes(currRestrictions)));
+                                }
+
+                            }
+                            dailyRestrictions.add(master_compare(masterArr));
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+
+                    cal.add(Calendar.DAY_OF_MONTH, 1);
+                    Toast.makeText(getApplicationContext(), dailyRestrictions.toString(), Toast.LENGTH_LONG).show();
+                }
+
+                /*
+                calendars = new Calendar[Integer.parseInt(dueOn.getText().toString())];
+
 
                 calendars[0] = cal;
                 for (int i = 1; i < calendars.length; i++) {
@@ -99,8 +174,8 @@ public class NewProjectActivity extends AppCompatActivity {
                     calendars[i].add(Calendar.DAY_OF_MONTH, 1);
                 }
 
-                for (GLOBALCOUNT = 0; GLOBALCOUNT < calendars.length; GLOBALCOUNT++) {
-                    final ArrayList<ArrayList<ArrayList<Integer>>> finalList = new ArrayList<ArrayList<ArrayList<Integer>>>();
+
+                for (GLOBALCOUNT = 0; GLOBALCOUNT < Integer.parseInt(dueOn.getText().toString()); GLOBALCOUNT++) {
 
 
                     users.addValueEventListener(new ValueEventListener() {
@@ -108,8 +183,6 @@ public class NewProjectActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
-                            final ArrayList<ArrayList<Integer>> events = new ArrayList<>();
-                            int count = 0;
                             for (DataSnapshot d : dataSnapshot.getChildren()) {
                                 if (checkedUids.contains(d.getKey())) {
                                     DatabaseReference subUser = users.child(d.getKey());
@@ -171,7 +244,7 @@ public class NewProjectActivity extends AppCompatActivity {
 
                     ArrayList<ArrayList<Integer>> finalRanges = master_compare(finalList);
                     Toast.makeText(getApplicationContext(), finalRanges.toString(), Toast.LENGTH_LONG).show();
-                }
+                } */
 
 
 
@@ -179,6 +252,18 @@ public class NewProjectActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+    private boolean calEqual(Calendar c1, Calendar c2) {
+        if (c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR)) {
+            if (c1.get(Calendar.MONTH) == c2.get(Calendar.MONTH)) {
+                if (c1.get(Calendar.DAY_OF_MONTH) == c2.get(Calendar.DAY_OF_MONTH)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public static int convertToMins(int hr, int min) {
