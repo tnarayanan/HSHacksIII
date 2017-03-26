@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/section_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/spacer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Enter Event Name"
+                android:textAlignment="center" />
+
+            <EditText
+                android:id="@+id/eventName2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Enter Name of Event"
+                android:inputType="textPersonName" />
+
+            <TextView
+                android:id="@+id/spacer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Start Time"
+                android:textAlignment="center" />
+
+            <TimePicker
+                android:id="@+id/startTime2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/spacer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="End Time"
+                android:textAlignment="center" />
+
+            <TimePicker
+                android:id="@+id/endTime2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/spacer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Frequency"
+                android:textAlignment="center" />
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="102dp">
+
+
+                <CheckBox
+                    android:id="@+id/Tuesday"
+                    android:layout_width="118dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:layout_row="0"
+                    android:text="Tuesday" />
+
+                <CheckBox
+                    android:id="@+id/monday"
+                    android:layout_width="119dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_row="0"
+                    android:text="Monday" />
+
+                <CheckBox
+                    android:id="@+id/sunday"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_row="0"
+                    android:text="Sunday" />
+
+                <CheckBox
+                    android:id="@+id/saturday"
+                    android:layout_width="117dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_row="2"
+                    android:text="Saturday" />
+
+                <CheckBox
+                    android:id="@+id/wednesday"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_row="1"
+                    android:text="Wednesday" />
+
+                <CheckBox
+                    android:id="@+id/thursday"
+                    android:layout_width="119dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_row="1"
+                    android:text="Thursday" />
+
+                <CheckBox
+                    android:id="@+id/friday"
+                    android:layout_width="114dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="2"
+                    android:layout_row="1"
+                    android:text="Friday" />
+
+            </GridLayout>
+
+            <Button
+                android:id="@+id/submit2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_weight="0.71"
+                android:text="Submit"
+                android:textAlignment="center" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

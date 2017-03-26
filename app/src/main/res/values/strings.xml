@@ -17,4 +17,5 @@
     <string name="action_logout">Logout</string>
     <string name="title_activity_tabbed_add_event">TabbedAddEventActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_tabbed_new_event">TabbedNewEventActivity</string>
 </resources>

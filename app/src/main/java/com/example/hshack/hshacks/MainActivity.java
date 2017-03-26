@@ -5,13 +5,11 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -21,14 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
 import java.util.StringTokenizer;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     CalendarView calendarView;
     ListView listView;
     FloatingActionButton fab;
+
+    Button newEvent;
+    Button newProject;
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
@@ -58,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
@@ -66,18 +61,28 @@ public class MainActivity extends AppCompatActivity {
             loadLogInView();
         } else {
 
-            calendarView = (CalendarView) findViewById(R.id.calendarView);
+            calendarView = (CalendarView) findViewById(R.id.calendarView2);
             listView = (ListView) findViewById(R.id.listView);
-            fab = (FloatingActionButton) findViewById(R.id.floatingActionButton);
+
+            newEvent = (Button) findViewById(R.id.newEvent);
+            newProject = (Button) findViewById(R.id.newProject);
+
+            newEvent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(getApplicationContext(), TabbedNewEventActivity.class);
+                    startActivity(i);
+                }
+            });
 
 
-            fab.setOnClickListener(new View.OnClickListener() {
+            /*fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent i = new Intent(getApplicationContext(), NewEventActivity.class);
                     startActivity(i);
                 }
-            });
+            });*/
 
             calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
                 @Override
@@ -111,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
 */
 
 
-
                     final Calendar calendar = Calendar.getInstance();
                     calendar.set(Calendar.YEAR, year);
                     calendar.set(Calendar.MONTH, month);
@@ -135,7 +139,8 @@ public class MainActivity extends AppCompatActivity {
                                     int currDay = Integer.parseInt(st.nextToken());
                                     if (currDay == selectedDay) {
                                         String timeStr = st.nextToken() + ":" + st.nextToken() + " to " + st.nextToken() + ":" + st.nextToken();
-                                        adapter.add(d.getKey());
+                                        String currKey = d.getKey();
+                                        adapter.add(currKey.substring(0, currKey.length() - 1) + " from " + timeStr);
                                     }
                                 } else {
                                     Calendar calendar1 = Calendar.getInstance();
@@ -146,7 +151,8 @@ public class MainActivity extends AppCompatActivity {
 
                                     if (calEqual(calendar, calendar1)) {
                                         String timeStr = st.nextToken() + ":" + st.nextToken() + " to " + st.nextToken() + ":" + st.nextToken();
-                                        adapter.add(d.getKey());
+                                        String currKey = d.getKey();
+                                        adapter.add(currKey.substring(0, currKey.length() - 1) + " from " + timeStr);
                                     }
                                 }
 

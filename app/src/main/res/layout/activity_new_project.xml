@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.hshack.hshacks.NewProjectActivity">
+
+    <EditText
+        android:id="@+id/newProjectText"
+        android:layout_width="344dp"
+        android:layout_height="52dp"
+        android:ems="10"
+        android:hint="Project Name"
+        android:inputType="textPersonName"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <Button
+        android:id="@+id/submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        tools:layout_editor_absoluteX="136dp"
+        tools:layout_editor_absoluteY="454dp" />
+
+    <EditText
+        android:id="@+id/dueOnField"
+        android:layout_width="344dp"
+        android:layout_height="57dp"
+        android:ems="10"
+        android:hint="Due On"
+        android:inputType="date"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="338dp" />
+
+    <EditText
+        android:id="@+id/timeComplete"
+        android:layout_width="344dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Time to Complete (Hours)"
+        android:inputType="number"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="404dp" />
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="344dp"
+        android:layout_height="263dp"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="68dp" />
+
+</android.support.constraint.ConstraintLayout>
