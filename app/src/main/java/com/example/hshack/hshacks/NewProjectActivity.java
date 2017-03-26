@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -80,22 +81,23 @@ public class NewProjectActivity extends AppCompatActivity {
 
         submit = (Button) findViewById(R.id.submit);
 
-        Calendar cal = Calendar.getInstance();
-        Calendar targetCal = Calendar.getInstance();
-        targetCal.setTime(new Date(dueOn.toString()));
 
-        final Calendar[] calendars = new Calendar[Integer.parseInt(dueOn.getText().toString())];
-
-        calendars[0] = cal;
-        for (int i = 1; i < calendars.length; i++) {
-            calendars[i] = (Calendar) calendars[i - 1].clone();
-            calendars[i].add(Calendar.DAY_OF_MONTH, 1);
-        }
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                Calendar cal = Calendar.getInstance();
+                Calendar targetCal = Calendar.getInstance();
+                targetCal.add(Calendar.DAY_OF_MONTH, Integer.parseInt(dueOn.getText().toString()));
+
+                final Calendar[] calendars = new Calendar[Integer.parseInt(dueOn.getText().toString())];
+
+                calendars[0] = cal;
+                for (int i = 1; i < calendars.length; i++) {
+                    calendars[i] = (Calendar) calendars[i - 1].clone();
+                    calendars[i].add(Calendar.DAY_OF_MONTH, 1);
+                }
 
                 for (GLOBALCOUNT = 0; GLOBALCOUNT < calendars.length; GLOBALCOUNT++) {
                     final ArrayList<ArrayList<ArrayList<Integer>>> finalList = new ArrayList<ArrayList<ArrayList<Integer>>>();
