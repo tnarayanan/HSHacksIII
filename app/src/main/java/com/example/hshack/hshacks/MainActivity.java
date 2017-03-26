@@ -2,9 +2,11 @@ package com.example.hshack.hshacks;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.ListView;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private final String[] days = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
     CalendarView calendarView;
     ListView listView;
+    FloatingActionButton fab;
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
@@ -65,10 +68,16 @@ public class MainActivity extends AppCompatActivity {
 
             calendarView = (CalendarView) findViewById(R.id.calendarView);
             listView = (ListView) findViewById(R.id.listView);
+            fab = (FloatingActionButton) findViewById(R.id.floatingActionButton);
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, new String[]{"HI", "Cool"});
-            listView.setAdapter(adapter);
 
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(getApplicationContext(), NewEventActivity.class);
+                    startActivity(i);
+                }
+            });
 
             calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
                 @Override
@@ -109,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                     calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                     final int selectedDay = calendar.get(Calendar.DAY_OF_WEEK);
 
-                    myRef = database.getReference().child("tejas");
+                    myRef = database.getReference().child("Users").child(mFirebaseUser.getUid());
                     myRef.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -133,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                                     calendar1.set(Calendar.YEAR, Integer.parseInt(st.nextToken()));
                                     calendar1.set(Calendar.MONTH, Integer.parseInt(st.nextToken()) - 1);
                                     calendar1.set(Calendar.DAY_OF_MONTH, Integer.parseInt(st.nextToken()));
-                                    Toast.makeText(getApplicationContext(), calendar.getTime().toString() + " " + calendar1.getTime().toString() + " " + calEqual(calendar, calendar1), Toast.LENGTH_LONG).show();
+                                    //Toast.makeText(getApplicationContext(), calendar.getTime().toString() + " " + calendar1.getTime().toString() + " " + calEqual(calendar, calendar1), Toast.LENGTH_LONG).show();
 
                                     if (calEqual(calendar, calendar1)) {
                                         String timeStr = st.nextToken() + ":" + st.nextToken() + " to " + st.nextToken() + ":" + st.nextToken();

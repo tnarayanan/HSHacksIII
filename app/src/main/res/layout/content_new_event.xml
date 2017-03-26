@@ -13,30 +13,16 @@
     tools:showIn="@layout/activity_new_event"
     android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/listView"
+    <EditText
+        android:id="@+id/todoText"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-    </ListView>
+        android:layout_height="60dp"
+        android:hint="Event Name" />
 
-    <LinearLayout
+    <Button
+        android:id="@+id/addButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/todoText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="What Do You Need To Do?" />
-
-        <Button
-            android:id="@+id/addButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/add_item" />
-    </LinearLayout>
+        android:text="@string/add_item" />
 
 </LinearLayout>
