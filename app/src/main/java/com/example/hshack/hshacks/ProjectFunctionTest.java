@@ -7,7 +7,7 @@ import java.util.Arrays;
  * Created by hshack on 3/25/17.
  */
 
-public class ProjectFunctionTest {
+public class                   ProjectFunctionTest {
 
     public static void main(String[] args) {
         /*ArrayList<Integer> mins = new ArrayList<>(Arrays.asList(1, 2, 3, 5, 7, 8, 9, 11));

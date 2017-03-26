@@ -1,5 +1,6 @@
 package com.example.hshack.hshacks;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -191,6 +192,10 @@ public class TabbedNewEventActivity extends AppCompatActivity {
                     if (thursday.isChecked()) mDatabase.child("Users").child(mUserId).child(name.getText().toString() + "5").setValue("1 5 " + startTime1.getHour() + " " + startTime1.getMinute() + " " + endTime1.getHour() + " " + endTime1.getMinute());
                     if (friday.isChecked()) mDatabase.child("Users").child(mUserId).child(name.getText().toString() + "6").setValue("1 6 " + startTime1.getHour() + " " + startTime1.getMinute() + " " + endTime1.getHour() + " " + endTime1.getMinute());
                     if (saturday.isChecked()) mDatabase.child("Users").child(mUserId).child(name.getText().toString() + "7").setValue("1 7 " + startTime1.getHour() + " " + startTime1.getMinute() + " " + endTime1.getHour() + " " + endTime1.getMinute());
+
+                    Intent i = new Intent(getContext(), MainActivity.class);
+                    startActivity(i);
+                    return;
                 }
             });
             textView.setText("Repeating Event");
