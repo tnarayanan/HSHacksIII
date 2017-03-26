@@ -1,5 +1,6 @@
 package com.example.hshack.hshacks;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,24 +38,43 @@ public class MainActivity extends AppCompatActivity {
     CalendarView calendarView;
     ListView listView;
 
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+
+
+    private void loadLogInView() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        calendarView = (CalendarView) findViewById(R.id.calendarView);
-        listView = (ListView) findViewById(R.id.listView);
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, new String[]{"HI", "Cool"});
-        listView.setAdapter(adapter);
+        if (mFirebaseUser == null) {
+            // Not logged in, launch the Log In activity
+            loadLogInView();
+        } else {
+
+            calendarView = (CalendarView) findViewById(R.id.calendarView);
+            listView = (ListView) findViewById(R.id.listView);
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, new String[]{"HI", "Cool"});
+            listView.setAdapter(adapter);
 
 
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                //BufferedReader calFile;
-                StringTokenizer st;
+            calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                @Override
+                public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                    //BufferedReader calFile;
+                    StringTokenizer st;
 
 
 /*
@@ -81,63 +103,65 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                final Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.YEAR, year);
-                calendar.set(Calendar.MONTH, month);
-                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                final int selectedDay = calendar.get(Calendar.DAY_OF_WEEK);
+                    final Calendar calendar = Calendar.getInstance();
+                    calendar.set(Calendar.YEAR, year);
+                    calendar.set(Calendar.MONTH, month);
+                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    final int selectedDay = calendar.get(Calendar.DAY_OF_WEEK);
 
-                myRef = database.getReference().child("tejas");
-                myRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    myRef = database.getReference().child("tejas");
+                    myRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1);
+                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1);
 
-                        for (DataSnapshot d : dataSnapshot.getChildren()) {
-                            String value = d.getValue(String.class);
-                            StringTokenizer st = new StringTokenizer(value);
-                            int recurring = Integer.parseInt(st.nextToken());
+                            for (DataSnapshot d : dataSnapshot.getChildren()) {
+                                String value = d.getValue(String.class);
+                                StringTokenizer st = new StringTokenizer(value);
+                                int recurring = Integer.parseInt(st.nextToken());
 
 
-                            if (recurring == 1) {
-                                int currDay = Integer.parseInt(st.nextToken());
-                                if (currDay == selectedDay) {
-                                    String timeStr = st.nextToken() + ":" + st.nextToken() + " to " + st.nextToken() + ":" + st.nextToken();
-                                    adapter.add(d.getKey());
+                                if (recurring == 1) {
+                                    int currDay = Integer.parseInt(st.nextToken());
+                                    if (currDay == selectedDay) {
+                                        String timeStr = st.nextToken() + ":" + st.nextToken() + " to " + st.nextToken() + ":" + st.nextToken();
+                                        adapter.add(d.getKey());
+                                    }
+                                } else {
+                                    Calendar calendar1 = Calendar.getInstance();
+                                    calendar1.set(Calendar.YEAR, Integer.parseInt(st.nextToken()));
+                                    calendar1.set(Calendar.MONTH, Integer.parseInt(st.nextToken()) - 1);
+                                    calendar1.set(Calendar.DAY_OF_MONTH, Integer.parseInt(st.nextToken()));
+                                    Toast.makeText(getApplicationContext(), calendar.getTime().toString() + " " + calendar1.getTime().toString() + " " + calEqual(calendar, calendar1), Toast.LENGTH_LONG).show();
+
+                                    if (calEqual(calendar, calendar1)) {
+                                        String timeStr = st.nextToken() + ":" + st.nextToken() + " to " + st.nextToken() + ":" + st.nextToken();
+                                        adapter.add(d.getKey());
+                                    }
                                 }
-                            } else {
-                                Calendar calendar1 = Calendar.getInstance();
-                                calendar1.set(Calendar.YEAR, Integer.parseInt(st.nextToken()));
-                                calendar1.set(Calendar.MONTH, Integer.parseInt(st.nextToken()) - 1);
-                                calendar1.set(Calendar.DAY_OF_MONTH, Integer.parseInt(st.nextToken()));
-                                Toast.makeText(getApplicationContext(), calendar.getTime().toString() + " " + calendar1.getTime().toString() + " " + calEqual(calendar, calendar1), Toast.LENGTH_LONG).show();
 
-                                if (calEqual(calendar, calendar1)) {
-                                    String timeStr = st.nextToken() + ":" + st.nextToken() + " to " + st.nextToken() + ":" + st.nextToken();
-                                    adapter.add(d.getKey());
-                                }
                             }
+
+
+                            //Toast.makeText(getApplicationContext(), dataSnapshot.getChildrenCount() + " " + names.toString() + " " + values.toString(), Toast.LENGTH_LONG).show();
+
+
+                            listView.setAdapter(adapter);
 
                         }
 
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                        //Toast.makeText(getApplicationContext(), dataSnapshot.getChildrenCount() + " " + names.toString() + " " + values.toString(), Toast.LENGTH_LONG).show();
-
-
-                        listView.setAdapter(adapter);
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                        }
+                    });
 
 
-            }
-        });
+                }
+            });
+
+        }
 
 
     }
